@@ -1,0 +1,17 @@
+/* src/App.css */
+#root {
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  overflow: hidden;
+  background-color: #050505;
+}
+
+.hud-overlay {
+  position: relative;
+  z-index: 10;
+  pointer-events: none; /* Permite que el mouse pase a través del texto al 3D */
+  color: #00f3ff;
+  font-family: 'Courier New', Courier, monospace;
+  padding: 50px;
+}
