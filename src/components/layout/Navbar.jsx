@@ -1,30 +1,52 @@
+// src/components/layout/Navbar.jsx
 import React, { useState, useEffect } from 'react';
-import { AppBar, Toolbar, Typography, Box, Container } from '@mui/material';
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  Box,
+  Container,
+  Button,
+  IconButton,
+  Drawer,
+  List,
+  ListItem,
+  ListItemText,
+} from '@mui/material';
+import MenuIcon from '@mui/icons-material/Menu';
+import CloseIcon from '@mui/icons-material/Close';
+import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 
 const navItems = [
   { label: 'RESUMEN', id: 'hero' },
-  { label: 'HABILIDADES', id: 'skills'},
-  { label: 'PROYECTOS', id: 'projects'},
- 
+  { label: 'PROYECTOS', id: 'proyectos' },
+  { label: 'HABILIDADES', id: 'habilidades' },
 ];
 
-const CYAN = "#00f3ff";
+const CYAN = '#00f3ff';
+const GREEN_NEON = '#00ff87';
+
+// ⚠️ Cambia '59170000000' por tu número de WhatsApp real con código de país
+const WHATSAPP_NUMBER = '59175824357';
+const WHATSAPP_MESSAGE = encodeURIComponent('Hola Julio, vi tu portafolio y me gustaría ponerme en contacto contigo.');
+const WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMBER}?text=${WHATSAPP_MESSAGE}`;
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 80);
+    const handleScroll = () => setScrolled(window.scrollY > 30);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Función de navegación suave
   const scrollToSection = (e, id) => {
     e.preventDefault();
+    setMobileOpen(false);
     const element = document.getElementById(id);
     if (element) {
-      const offset = 80; // Ajuste para que no quede tapado por el navbar
+      const offset = 80;
       const bodyRect = document.body.getBoundingClientRect().top;
       const elementRect = element.getBoundingClientRect().top;
       const elementPosition = elementRect - bodyRect;
@@ -32,129 +54,253 @@ export default function Navbar() {
 
       window.scrollTo({
         top: offsetPosition,
-        behavior: 'smooth'
+        behavior: 'smooth',
       });
     }
   };
 
   return (
-    <AppBar 
-      position="fixed" 
-      sx={{ 
-        background: 'transparent', 
-        boxShadow: 'none',
-        transition: 'all 0.5s cubic-bezier(0.19, 1, 0.22, 1)',
-        top: scrolled ? 0 : 20, 
+    <AppBar
+      position="fixed"
+      sx={{
+        background: scrolled
+          ? 'rgba(6, 10, 22, 0.88)'
+          : 'linear-gradient(180deg, rgba(6,10,22,0.9) 0%, rgba(6,10,22,0.2) 100%)',
+        backdropFilter: 'blur(20px)',
+        boxShadow: scrolled
+          ? '0 0 25px rgba(0, 243, 255, 0.25), inset 0 -1px 0 rgba(0, 243, 255, 0.4)'
+          : 'none',
+        borderBottom: '1px solid rgba(0, 243, 255, 0.25)',
+        transition: 'all 0.4s ease',
       }}
     >
-      <Container maxWidth="xl">
-        <Toolbar sx={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          background: scrolled ? 'rgba(2, 4, 10, 0.9)' : 'rgba(2, 4, 10, 0.2)',
-          backdropFilter: 'blur(20px)',
-          borderBottom: `1px solid ${scrolled ? 'rgba(0, 243, 255, 0.3)' : 'rgba(255, 255, 255, 0.05)'}`,
-          transition: 'all 0.5s ease',
-          height: scrolled ? '60px' : '80px',
-          px: { md: 6 },
-        }}>
-          
-          {/* LADO IZQUIERDO: IDENTITY */}
-          <Box 
+      <Container maxWidth="lg">
+        <Toolbar sx={{ justifyContent: 'space-between', py: 1.2, px: '0 !important' }}>
+          {/* Logo Brand Cyberpunk */}
+          <Box
+            component="a"
+            href="#hero"
             onClick={(e) => scrollToSection(e, 'hero')}
-            sx={{ display: 'flex', flexDirection: 'column', cursor: 'pointer' }}
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1.5,
+              textDecoration: 'none',
+              cursor: 'pointer',
+            }}
           >
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-              <Box sx={{ 
-                width: 4, height: 18, bgcolor: CYAN, 
-                boxShadow: `0 0 15px ${CYAN}`,
-                animation: 'blink 2s infinite' 
-              }} />
-              <Typography sx={{ 
-                fontFamily: 'monospace', fontWeight: 900, letterSpacing: 5,
-                color: '#fff', fontSize: '0.9rem' 
-              }}>
-                R.JULIO_DEVELOPER
-              </Typography>
-            </Box>
+            <Box
+              sx={{
+                width: 10,
+                height: 10,
+                bgcolor: CYAN,
+                boxShadow: `0 0 12px ${CYAN}, 0 0 20px ${CYAN}`,
+                borderRadius: '2px',
+                transform: 'rotate(45deg)',
+              }}
+            />
+            <Typography
+              variant="h6"
+              sx={{
+                fontFamily: 'monospace',
+                fontWeight: 900,
+                color: '#fff',
+                letterSpacing: '2px',
+                fontSize: { xs: '1rem', sm: '1.25rem' },
+                textShadow: `0 0 10px rgba(0, 243, 255, 0.5)`,
+                '&:hover': {
+                  color: CYAN,
+                },
+              }}
+            >
+              R._JULIO_DEVELOPER
+            </Typography>
           </Box>
 
-          {/* CENTRO: NAVEGACIÓN */}
-          <Box sx={{ display: { xs: 'none', lg: 'flex' }, gap: 6 }}>
+          {/* Menú Desktop */}
+          <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', gap: 3.5 }}>
             {navItems.map((item) => (
-              <Box 
-                key={item.label}
-                component="a"
-                href={`#${item.id}`}
+              <Button
+                key={item.id}
                 onClick={(e) => scrollToSection(e, item.id)}
                 sx={{
-                  textDecoration: 'none',
+                  color: '#e2e8f0',
+                  fontFamily: 'monospace',
+                  fontSize: '0.85rem',
+                  fontWeight: 600,
+                  letterSpacing: '1.5px',
                   position: 'relative',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  '&:hover .label': { color: CYAN },
-                  '&:hover .line': { width: '100%', bgcolor: CYAN }
+                  px: 1.5,
+                  py: 0.8,
+                  borderRadius: '6px',
+                  transition: 'all 0.3s ease',
+                  '&:hover': {
+                    color: CYAN,
+                    backgroundColor: 'rgba(0, 243, 255, 0.08)',
+                    boxShadow: '0 0 15px rgba(0, 243, 255, 0.2)',
+                  },
                 }}
               >
-                <Typography sx={{ 
-                  color: CYAN, fontSize: '0.5rem', fontFamily: 'monospace', mb: 0.5, opacity: 0.5 
-                }}>
-                  {item.code}
-                </Typography>
-                <Typography className="label" sx={{ 
-                  color: '#fff', fontSize: '0.7rem', fontWeight: 600, 
-                  letterSpacing: 3, transition: '0.3s' 
-                }}>
-                  {item.label}
-                </Typography>
-                <Box className="line" sx={{ 
-                  width: '0%', height: '1px', bgcolor: 'rgba(255,255,255,0.2)', 
-                  mt: 0.5, transition: '0.4s cubic-bezier(0.19, 1, 0.22, 1)' 
-                }} />
-              </Box>
+                {item.label}
+              </Button>
             ))}
-          </Box>
 
-          {/* LADO DERECHO: ACCIÓN */}
-          <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', gap: 4 }}>
-            <Box sx={{ textAlign: 'right' }}>
-              <Typography sx={{ color: '#00ff00', fontSize: '0.5rem', fontFamily: 'monospace', fontWeight: 'bold' }}>
+            {/* Badge Status Activo */}
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 1,
+                bgcolor: 'rgba(0, 255, 135, 0.08)',
+                border: `1px solid ${GREEN_NEON}50`,
+                px: 1.5,
+                py: 0.5,
+                borderRadius: '20px',
+                boxShadow: `0 0 10px ${GREEN_NEON}30`,
+              }}
+            >
+              <Box
+                sx={{
+                  width: 8,
+                  height: 8,
+                  borderRadius: '50%',
+                  bgcolor: GREEN_NEON,
+                  boxShadow: `0 0 10px ${GREEN_NEON}`,
+                  animation: 'pulse 2s infinite',
+                  '@keyframes pulse': {
+                    '0%': { opacity: 0.4 },
+                    '50%': { opacity: 1 },
+                    '100%': { opacity: 0.4 },
+                  },
+                }}
+              />
+              <Typography
+                variant="caption"
+                sx={{
+                  color: GREEN_NEON,
+                  fontFamily: 'monospace',
+                  fontWeight: 'bold',
+                  letterSpacing: '1px',
+                  fontSize: '0.7rem',
+                }}
+              >
                 ACTIVO
               </Typography>
             </Box>
-            
-            <Box 
-              onClick={(e) => scrollToSection(e, 'contact')}
-              sx={{ 
-                border: `1px solid ${CYAN}`,
-                p: '8px 20px',
-                position: 'relative',
-                cursor: 'pointer',
-                transition: '0.3s',
+
+            {/* Botón de Contacto por WhatsApp */}
+            <Button
+              variant="contained"
+              component="a"
+              href={WHATSAPP_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              startIcon={<WhatsAppIcon sx={{ color: '#0a0f1e !important' }} />}
+              sx={{
+                bgcolor: CYAN,
+                color: '#0a0f1e',
+                fontFamily: 'monospace',
+                fontWeight: 900,
+                px: 2.5,
+                py: 1,
+                borderRadius: '8px',
+                letterSpacing: '1px',
+                fontSize: '0.8rem',
+                boxShadow: `0 0 20px rgba(0, 243, 255, 0.5)`,
+                transition: 'all 0.3s ease',
                 '&:hover': {
-                  bgcolor: `${CYAN}11`,
-                  boxShadow: `inset 0 0 15px ${CYAN}33`,
-                  '& .corner': { width: 12, height: 12 }
-                }
+                  bgcolor: GREEN_NEON,
+                  boxShadow: `0 0 30px ${GREEN_NEON}`,
+                  transform: 'translateY(-2px)',
+                },
               }}
             >
-              <Box className="corner" sx={{ position: 'absolute', top: -2, left: -2, width: 6, height: 6, borderTop: `2px solid ${CYAN}`, borderLeft: `2px solid ${CYAN}`, transition: '0.3s' }} />
-              <Box className="corner" sx={{ position: 'absolute', bottom: -2, right: -2, width: 6, height: 6, borderBottom: `2px solid ${CYAN}`, borderRight: `2px solid ${CYAN}`, transition: '0.3s' }} />
-              
-              <Typography sx={{ color: '#fff', fontSize: '0.65rem', fontWeight: 900, letterSpacing: 2 }}>
-                CONTACTAR_AHORA
-              </Typography>
-            </Box>
+              CONTACTAR_AHORA
+            </Button>
           </Box>
+
+          {/* Menú Móvil Hamburger Icon */}
+          <IconButton
+            onClick={() => setMobileOpen(true)}
+            sx={{
+              display: { xs: 'flex', md: 'none' },
+              color: CYAN,
+              border: '1px solid rgba(0, 243, 255, 0.3)',
+              borderRadius: '8px',
+              bgcolor: 'rgba(0, 243, 255, 0.05)',
+            }}
+          >
+            <MenuIcon />
+          </IconButton>
         </Toolbar>
       </Container>
 
-      <style>{`
-        @keyframes blink {
-          0%, 100% { opacity: 1; filter: brightness(1.2); }
-          50% { opacity: 0.3; filter: brightness(0.8); }
-        }
-      `}</style>
+      {/* Drawer Móvil Desplegable */}
+      <Drawer
+        anchor="right"
+        open={mobileOpen}
+        onClose={() => setMobileOpen(false)}
+        PaperProps={{
+          sx: {
+            width: '280px',
+            background: 'rgba(6, 10, 22, 0.98)',
+            backdropFilter: 'blur(20px)',
+            borderLeft: '1px solid rgba(0, 243, 255, 0.3)',
+            p: 3,
+          },
+        }}
+      >
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 3 }}>
+          <IconButton onClick={() => setMobileOpen(false)} sx={{ color: CYAN }}>
+            <CloseIcon />
+          </IconButton>
+        </Box>
+        <List>
+          {navItems.map((item) => (
+            <ListItem
+              key={item.id}
+              onClick={(e) => scrollToSection(e, item.id)}
+              sx={{
+                cursor: 'pointer',
+                mb: 1.5,
+                borderRadius: '6px',
+                '&:hover': { bgcolor: 'rgba(0, 243, 255, 0.1)' },
+              }}
+            >
+              <ListItemText
+                primary={item.label}
+                primaryTypographyProps={{
+                  fontFamily: 'monospace',
+                  color: '#fff',
+                  letterSpacing: '2px',
+                  fontWeight: 'bold',
+                }}
+              />
+            </ListItem>
+          ))}
+          <Button
+            fullWidth
+            variant="contained"
+            component="a"
+            href={WHATSAPP_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            startIcon={<WhatsAppIcon />}
+            sx={{
+              mt: 4,
+              bgcolor: CYAN,
+              color: '#0a0f1e',
+              fontFamily: 'monospace',
+              fontWeight: 'bold',
+              py: 1.2,
+              borderRadius: '8px',
+              boxShadow: `0 0 15px rgba(0, 243, 255, 0.4)`,
+            }}
+          >
+            CONTACTAR_AHORA
+          </Button>
+        </List>
+      </Drawer>
     </AppBar>
   );
 }

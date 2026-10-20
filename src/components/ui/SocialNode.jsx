@@ -1,164 +1,195 @@
-// src/components/ui/SocialNodes.jsx
+// src/components/ui/SocialNode.jsx
+import React from 'react';
 import { Box, Typography } from '@mui/material';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import EmailIcon from '@mui/icons-material/Email';
+import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 
 const socialLinks = [
-  { name: 'GITHUB', icon: <GitHubIcon />, url: '#' },
-  { name: 'LINKEDIN', icon: <LinkedInIcon />, url: '#' },
-  { name: 'E-MAIL', icon: <EmailIcon />, url: '#' },
+  {
+    name: 'GITHUB',
+    protocol: '// REPO_ACCESS',
+    url: 'https://github.com/jrccdevs',
+    icon: <GitHubIcon sx={{ fontSize: '2.5rem' }} />,
+    color: '#00f3ff',
+    id: '01',
+    delay: '0s',
+  },
+  {
+    name: 'LINKEDIN',
+    protocol: '// PROFESSIONAL_NET',
+    url: 'https://linkedin.com/in/tu-perfil',
+    icon: <LinkedInIcon sx={{ fontSize: '2.5rem' }} />,
+    color: '#00a2ff',
+    id: '02',
+    delay: '0.6s',
+  },
+  {
+    name: 'WHATSAPP',
+    protocol: '// DIRECT_STREAM',
+    url: 'https://wa.me/59175824357?text=Hola%20Julio,%20vi%20tu%20portafolio!',
+    icon: <WhatsAppIcon sx={{ fontSize: '2.5rem' }} />,
+    color: '#00ff87',
+    id: '03',
+    delay: '1.2s',
+  },
+  {
+    name: 'EMAIL',
+    protocol: '// SMTP_PROTOCOL',
+    url: 'mailto:reynaldocalani80@gmail.com',
+    icon: <EmailIcon sx={{ fontSize: '2.5rem' }} />,
+    color: '#ff0055',
+    id: '04',
+    delay: '1.8s',
+  },
 ];
 
-const WHITE = "#ffffff";
-
-export default function SocialNodes() {
+export default function SocialNode() {
   return (
-    <Box sx={{ 
-      display: 'flex', 
-      justifyContent: 'center', 
-      gap: { xs: 8, md: 16 }, // Más espacio para las órbitas
-      flexWrap: 'wrap',
-      py: 20,
-      perspective: '2000px', // Profundidad VR aumentada
-    }}>
-      {socialLinks.map((link, i) => (
+    <Box
+      sx={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        gap: { xs: 3, sm: 6, md: 8 },
+        flexWrap: 'wrap',
+        py: 6,
+        px: 2,
+        position: 'relative',
+      }}
+    >
+      {/* Línea Neón de Interconexión de Fondo */}
+      <Box
+        sx={{
+          position: 'absolute',
+          top: '40%',
+          left: '10%',
+          right: '10%',
+          height: '2px',
+          background: 'linear-gradient(90deg, transparent, rgba(0, 243, 255, 0.4), #00f3ff, rgba(0, 243, 255, 0.4), transparent)',
+          boxShadow: '0 0 12px #00f3ff',
+          zIndex: 0,
+          display: { xs: 'none', md: 'block' },
+        }}
+      />
+
+      {socialLinks.map((node, i) => (
         <Box
           key={i}
           component="a"
-          href={link.url}
+          href={node.url}
           target="_blank"
+          rel="noopener noreferrer"
           sx={{
-            textDecoration: 'none',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
+            textDecoration: 'none',
             position: 'relative',
-            transition: 'all 0.5s cubic-bezier(0.23, 1, 0.32, 1)',
-            // HOVER: El sistema orbital se acelera y se expande
-            '&:hover': { 
-              transform: 'scale(1.1) translateZ(50px)',
-              '& .orbit-ring-1': { transform: 'rotateX(70deg) rotateY(10deg) rotateZ(360deg)', borderColor: WHITE },
-              '& .orbit-ring-2': { transform: 'rotateX(-70deg) rotateY(-10deg) rotateZ(-360deg)', borderColor: WHITE },
-              '& .data-pulse': { animation: 'pulse-active 0.5s infinite alternate' },
-              '& .node-core': { boxShadow: `0 0 50px ${WHITE}` },
-              '& .label-text': { color: WHITE, opacity: 1, letterSpacing: '6px' }
-            }
+            zIndex: 1,
+            animation: `floatNode 4s ease-in-out infinite`,
+            animationDelay: node.delay,
+            '@keyframes floatNode': {
+              '0%, 100%': { transform: 'translateY(0px)' },
+              '50%': { transform: 'translateY(-14px)' },
+            },
+            '&:hover': {
+              '& .node-orb': {
+                transform: 'scale(1.18) rotate(8deg)',
+                borderColor: node.color,
+                boxShadow: `0 0 35px ${node.color}, inset 0 0 20px ${node.color}`,
+                background: `radial-gradient(circle, ${node.color}33 0%, rgba(10,15,30,0.9) 80%)`,
+              },
+              '& .node-icon': {
+                color: '#fff',
+                filter: `drop-shadow(0 0 12px ${node.color})`,
+              },
+              '& .node-title': {
+                color: node.color,
+                textShadow: `0 0 10px ${node.color}`,
+              },
+            },
           }}
         >
-          {/* SISTEMA ORBITAL 3D */}
-          <Box sx={{
-            width: '120px',
-            height: '120px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            position: 'relative',
-            transformStyle: 'preserve-3d',
-            // Rotación lenta constante del sistema completo
-            animation: `system-float ${4 + i}s infinite ease-in-out`
-          }}>
-            
-            {/* ANILLO ORBITAL 1 (Eje X) */}
-            <Box className="orbit-ring-1" sx={{
-              position: 'absolute',
-              width: '100%', height: '100%',
+          {/* Anillo Orbital / Esfera Flotante */}
+          <Box
+            className="node-orb"
+            sx={{
+              width: { xs: 80, sm: 100 },
+              height: { xs: 80, sm: 100 },
               borderRadius: '50%',
-              border: `1px solid ${WHITE}22`,
-              transform: 'rotateX(70deg) rotateY(10deg)',
-              transition: 'all 1s ease-in-out',
-              // Partícula orbitando en el anillo
-              '&::after': {
-                content: '""', position: 'absolute', top: '50%', left: '-2px',
-                width: '4px', height: '4px', bgcolor: WHITE, borderRadius: '50%',
-                boxShadow: `0 0 10px ${WHITE}`,
-                animation: 'orbit-particle 3s infinite linear'
-              }
-            }} />
-
-            {/* ANILLO ORBITAL 2 (Eje Y) */}
-            <Box className="orbit-ring-2" sx={{
-              position: 'absolute',
-              width: '100%', height: '100%',
-              borderRadius: '50%',
-              border: `1px solid ${WHITE}22`,
-              transform: 'rotateX(-70deg) rotateY(-10deg)',
-              transition: 'all 1s ease-in-out',
-            }} />
-
-            {/* NÚCLEO DEL NODO (Orb central) */}
-            <Box 
-              className="node-core"
+              background: 'rgba(10, 15, 30, 0.85)',
+              backdropFilter: 'blur(16px)',
+              border: `2px solid ${node.color}66`,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              boxShadow: `0 0 20px ${node.color}30, inset 0 0 10px ${node.color}15`,
+              transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+              position: 'relative',
+              mb: 2,
+            }}
+          >
+            {/* Destello/Aura Orbital Interno */}
+            <Box
               sx={{
-                width: '70px', height: '70px',
+                position: 'absolute',
+                inset: -6,
                 borderRadius: '50%',
-                bgcolor: 'rgba(0,0,0,0.9)', // Fondo opaco para aislar
-                border: `2px solid ${WHITE}`,
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                position: 'relative', zIndex: 3,
-                boxShadow: `0 0 20px ${WHITE}44`,
+                border: `1px dashed ${node.color}40`,
+                animation: 'spinOrbit 12s linear infinite',
+                '@keyframes spinOrbit': {
+                  '0%': { transform: 'rotate(0deg)' },
+                  '100%': { transform: 'rotate(360deg)' },
+                },
+              }}
+            />
+
+            {/* Icono en el Centro */}
+            <Box
+              className="node-icon"
+              sx={{
+                color: node.color,
+                display: 'flex',
                 transition: 'all 0.3s ease',
-                overflow: 'hidden',
               }}
             >
-              {/* Efecto de Pulso de Datos Interno */}
-              <Box className="data-pulse" sx={{
-                position: 'absolute', top: '50%', left: '50%',
-                width: '10px', height: '10px',
-                bgcolor: WHITE, borderRadius: '50%',
-                transform: 'translate(-50%, -50%)',
-                opacity: 0,
-                zIndex: 1
-              }} />
-
-              {/* Icono Principal */}
-              <Box sx={{ 
-                color: WHITE, fontSize: '2.5rem', zIndex: 2,
-                filter: `drop-shadow(0 0 10px ${WHITE})`
-              }}>
-                {link.icon}
-              </Box>
+              {node.icon}
             </Box>
           </Box>
-          
-          {/* ETIQUETA DE DATOS */}
-          <Box sx={{ mt: 5, textAlign: 'center' }}>
-            <Typography 
-              className="label-text"
-              variant="overline" 
-              sx={{ 
-                display: 'block', color: 'rgba(255,255,255,0.7)', fontWeight: 900, 
-                letterSpacing: 4, fontSize: '0.85rem', transition: 'all 0.3s ease',
-                textShadow: `0 0 10px ${WHITE}44`
-              }}
-            >
-              {link.name}
-            </Typography>
-            <Typography 
-              variant="caption" 
-              sx={{ color: 'rgba(255,255,255,0.3)', fontFamily: 'monospace', fontSize: '0.65rem' }}
-            >
-              {`// NODE_ID: 0x${i + 1}AA`}
-            </Typography>
-          </Box>
+
+          {/* Información y Protocolo Inferior */}
+          <Typography
+            className="node-title"
+            variant="subtitle1"
+            sx={{
+              fontFamily: 'monospace',
+              fontWeight: 900,
+              color: '#fff',
+              fontSize: '0.9rem',
+              letterSpacing: '2px',
+              transition: 'all 0.3s ease',
+            }}
+          >
+            {node.name}
+          </Typography>
+
+          <Typography
+            variant="caption"
+            sx={{
+              fontFamily: 'monospace',
+              color: node.color,
+              fontSize: '0.65rem',
+              letterSpacing: '1px',
+              opacity: 0.8,
+              mt: 0.5,
+            }}
+          >
+            {node.protocol}
+          </Typography>
         </Box>
       ))}
-
-      {/* KEYFRAMES DE ANIMACIONES ULTRA-DINÁMICAS */}
-      <style>{`
-        @keyframes system-float {
-          0%, 100% { transform: translateY(0) rotateY(0deg); }
-          50% { transform: translateY(-15px) rotateY(5deg); }
-        }
-        @keyframes orbit-particle {
-          0% { transform: rotate(0deg) translateX(60px) rotate(0deg); }
-          100% { transform: rotate(360deg) translateX(60px) rotate(-360deg); }
-        }
-        @keyframes pulse-active {
-          0% { width: 10px; height: 10px; opacity: 1; }
-          100% { width: 100px; height: 100px; opacity: 0; }
-        }
-      `}</style>
     </Box>
   );
 }
